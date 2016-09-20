@@ -19,7 +19,7 @@ void setup() {
 // Main Loop
 void loop() {
 
-  // Measure Temp Low button value
+  // Measure Temp low button value
   switch(analogRead(pinTempLow)){
     case 0:
       tempLow[0]--;
