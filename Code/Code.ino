@@ -6,46 +6,38 @@
 // Imported libraries
 
 // Pin Declarations
-int pinTempLow = A0;
-int pinTempUp = A1;
+int buttonSelect = 4;                                                   // Button used for selecting which furnace you're using
 
-int tempLow[] = {0, 0, 0, 0, 0, 0, 0, 0}; 
+int pL[] = {0, 0, 0, 0};                                                // Values pitten links
+int pR[] = {0, 0, 0, 0};                                                // Values pitten rechts
+
+// Variablen
+boolean buttonsRechts = false;                                          // Boolean to store buttonSelect value
+
 
 // Initial Setup
 void setup() {
-  //Serial.read(9600);
+  Serial.read(9600);
+  
 }
 
 // Main Loop
 void loop() {
 
-  // Measure Temp low button value
-  switch(analogRead(pinTempLow)){
-    case 0:
-      tempLow[0]--;
-      break;
-    case 1:
-      tempLow[1]--;
-      break;
-    case 2:
-      tempLow[2]--;
-      break;
-    case 3:
-      tempLow[3]--;
-      break;
-    case 4:
-      tempLow[4]--;
-      break;
-    case 5:
-      tempLow[5]--;
-      break;
-    case 6:
-      tempLow[6]--;
-      break;
-    case 7:
-      tempLow[7]--;
-      break;
+  /* Detect if button select has been pressed and if so change boolean */
+  if(digitalRead(buttonSelect) == HIGH && !buttonRechts){
+    buttonRechts = true;
+  }else if(digitalRead(buttonSelect) == HIGH && buttonRechts){
+    buttonRechts = false;
   }
 
+  /* Decide which pitten array has to be used and proceed with controlling it */
+  if(!buttonRechts){
+    /* Decide which button has been pressed and change array value */  
+    /* Use array pL[] */  
+  }else{
+    /* Decide which button has been pressed and change array value */
+    /* Use array pR[] */
+  }
+  
 }
-
