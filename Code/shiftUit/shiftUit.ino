@@ -1,3 +1,4 @@
+/* Function to shift 4-bit into the shiftregister */
 // the heart of the program
 void shiftUit(int myDataPin, int myClockPin, byte myDataOut) {
   // This shifts 8 bits out MSB first,
@@ -19,7 +20,7 @@ void shiftUit(int myDataPin, int myClockPin, byte myDataOut) {
   //NOTICE THAT WE ARE COUNTING DOWN in our for loop
   //This means that %00000001 or "1" will go through such
   //that it will be pin Q0 that lights.
-  for (i=7; i>=0; i--)  {
+  for (i=3; i>=0; i--)  {
     digitalWrite(myClockPin, 0);
 
     //if the value passed to myDataOut and a bitmask result
