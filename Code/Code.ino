@@ -14,8 +14,8 @@ const int clockPin = 12;
 const int dataPin = 11;;
 
 // Variablen
-int pL[] = {5, 5, 5, 5};                                                  // Values pitten links
-int pR[] = {5, 5, 3, 3};                                                  // Values pitten rechts
+int pL[] = {0, 0, 0, 0};                                                  // Values pitten links
+int pR[] = {0, 0, 0, 0};                                                  // Values pitten rechts
 
 boolean buttonRechts = false;                                             // Boolean to store buttonSelect value
 byte shift[] = {B0000, B0000, B0000, B0000, B0000, B0000, B0000, B0000};  // Byte array that holds all values that need to be shifted
