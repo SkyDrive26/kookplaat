@@ -1,6 +1,6 @@
 // Initial Date:  09-09-2016
 // Patch Date:    13-10-2016
-// Patch Version: 0.5
+// Patch Version: 0.5a
 // Patch Writer:  Daan van Bennekom
 // Project name:  Broodrooster Prime
 // Filename:      kookplaat
@@ -10,11 +10,15 @@
 
 // Pin Declarations
 const int buttonSelect = 4;                                              // Button used for selecting which furnace you're using
+const int buttonUp = A0;
+const int buttonDown = A1;
+const int safetyLock = 1;
+const int leftLED = 2;
+const int rightLED = 3;
+
 const int latchPin = 8;
 const int clockPin = 12;
 const int dataPin = 11;
-const int buttonUp = A0;
-const int buttonDown = A1;
 
 // Variablen
 int pL[] = {0, 0, 0, 0};                                                  // Values pitten links
@@ -33,6 +37,9 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+  pinMode(safetyLock, OUTPUT);
+  pinMode(leftLED, OUTPUT);
+  pinMode(rightLED, OUTPUT);
 
   /* Initial shift to write a decimal 0 to all 7-segments */
   //shift_it();
@@ -55,8 +62,12 @@ void left_right(){
   /* Detect if button select has been pressed and if so change boolean */
   if(digitalRead(buttonSelect) == HIGH && !buttonRechts){
     buttonRechts = true;
+    digitalWrite(leftLED, LOW);
+    digitalWrite(rightLED, HIGH);
   }else if(digitalRead(buttonSelect) == HIGH && buttonRechts){
     buttonRechts = false;
+    digitalWrite(leftLED, HIGH);
+    digitalWrite(rightLED, LOW);
   }
 }
 
