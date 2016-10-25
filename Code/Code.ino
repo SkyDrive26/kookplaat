@@ -1,5 +1,6 @@
 // Initial Date:  09-09-2016
-// Patch Date:    04-10-2016
+// Patch Date:    14-10-2016
+// Patch Version: 0.5b
 // Patch Writer:  Daan van Bennekom
 // Project name:  Broodrooster Prime
 // Filename:      kookplaat
@@ -8,16 +9,30 @@
 // Imported libraries
 
 // Pin Declarations
-const int buttonSelect = 4;                                              // Button used for selecting which furnace you're using
+const int buttonSelect = 6;                                              // Button used for selecting which furnace you're using
+const int buttonUp = A0;
+const int buttonDown = A1;
+
+const int safetyLock = 1;
+const int leftSafety = 2;
+const int rightSafety = 3;
+
+const int leftLED = 4;
+const int rightLED = 5;
+
 const int latchPin = 8;
 const int clockPin = 12;
-const int dataPin = 11;;
+const int dataPin = 11;
 
 // Variablen
 int pL[] = {0, 0, 0, 0};                                                  // Values pitten links
 int pR[] = {0, 0, 0, 0};                                                  // Values pitten rechts
 
 boolean buttonRechts = false;                                             // Boolean to store buttonSelect value
+boolean safety = false;
+boolean leftLock = false;
+boolean rightLock = false;
+
 byte shift[] = {B0000, B0000, B0000, B0000, B0000, B0000, B0000, B0000};  // Byte array that holds all values that need to be shifted
 
 // Initial Setup
@@ -27,9 +42,14 @@ void setup() {
 
   /* Declaring some pinmodes */
   pinMode(buttonSelect, INPUT);
+  pinMode(safteyLock, INPUT);
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+  pinMode(leftSafety, OUTPUT);
+  pinMode(rightSafety, OUTPUT);
+  pinMode(leftLED, OUTPUT);
+  pinMode(rightLED, OUTPUT);
 
   /* Initial shift to write a decimal 0 to all 7-segments */
   //shift_it();
@@ -37,26 +57,140 @@ void setup() {
 
 // Main Loop
 void loop() {
+  /* Execute all functions in the following order */
+  safety_lock();
+  left_right();
+  up_down();
+  get_binary();
+  shift_it();
+}
 
+/*   Function safety_lock() is being used
+ *   to put a safety lock on the left or
+ *   right side of the stove.
+ */
+void safety_lock(){
+  /* Replace this comment with button hold detection */
+  if(!buttonRechts && safety){
+    if(!leftLock){
+      leftLock = true;
+      digitalWrite(leftSafety, HIGH);
+      safety = false;
+    }else{
+      leftLock = false;
+      digitalWrite(leftSafety, LOW);
+      safety = false;
+    }
+  }else if(buttonRechts && safety){
+    if(!rightLock){
+      rightLock = true;
+      digitalWrite(rightSafety, HIGH);
+      safety = false;
+    }else{
+      rightLock = false;
+      digitalWrite(rightSafety, LOW);
+      safety = false;
+    }
+  }
+}
+
+/*  Function left_right() uses
+ *  boolean buttonSelect to decide
+ *  if buttonRechts should be true or false.
+ */
+void left_right(){
   /* Detect if button select has been pressed and if so change boolean */
   if(digitalRead(buttonSelect) == HIGH && !buttonRechts){
     buttonRechts = true;
+    digitalWrite(leftLED, LOW);
+    digitalWrite(rightLED, HIGH);
   }else if(digitalRead(buttonSelect) == HIGH && buttonRechts){
     buttonRechts = false;
+    digitalWrite(leftLED, HIGH);
+    digitalWrite(rightLED, LOW);
   }
+}
 
+/*  up_down() uses analogRead()
+ *  to decide if a value at pL[i]
+ *  or pR[i] has to be changed.
+ */
+void up_down(){
+  /*  The value 999 in every comparison that has been made in every
+   *  (else) if statement is going to be replaced with accurate
+   *  values as soon as we have decided what resistors we are
+   *  going to use.
+   */
+  /* Function Variablen */
+  int analogUp = analogRead(buttonUp);
+  int analogDown = analogRead(buttonDown);
+  
   /* Decide which pitten array has to be used and proceed with controlling it */
   if(!buttonRechts){
     /* Decide which button has been pressed and change array value */  
-    /* Use array pL[] */  
+    /* Use array pL[] */
+    if(!leftLock){
+      if(analogUp >= 999 && analogUp <= 999 && pL[0] < 9){
+        pL[0] += 1;
+        delay(1000);
+      }else if(analogUp >= 999 && analogUp <= 999 && pL[1] < 9){
+        pL[1] += 1;
+        delay(1000);
+      }else if(analogUp >= 999 && analogUp <= 999 && pL[2] < 9){
+        pL[2] += 1;
+        delay(1000);
+      }else if(analogUp >= 999 && analogUp <= 999 && pL[3] < 9){
+        pL[3] += 1;
+        delay(1000);
+      }
+
+      if(analogDown >= 999 && analogDown <= 999 && pL[0] > 0){
+        pL[0] -= 1;
+        delay(1000);
+      }else if(analogDown >= 999 && analogDown <= 999 && pL[1] > 0){
+        pL[1] -= 1;
+        delay(1000);
+      }else if(analogDown >= 999 && analogDown <= 999 && pL[2] > 0){
+        pL[2] -= 1;
+        delay(1000);
+      }else if(analogDown >= 999 && analogDown <= 999 && pL[3] > 0){
+        pL[3] -= 1;
+        delay(1000);
+      }
+    }  
   }else{
     /* Decide which button has been pressed and change array value */
     /* Use array pR[] */
-  }
+    if(!rightLock){
+      if(analogUp >= 999 && analogUp <= 999 && pR[0] < 9){
+        pR[0] += 1;
+        delay(1000);
+      }else if(analogUp >= 999 && analogUp <= 999 && pR[1] < 9){
+        pR[1] += 1;
+        delay(1000);
+      }else if(analogUp >= 999 && analogUp <= 999 && pR[2] < 9){
+        pR[2] += 1;
+        delay(1000);
+      }else if(analogUp >= 999 && analogUp <= 999 && pR[3] < 9){
+        pR[3] += 1;
+        delay(1000);
+      }
 
-  get_binary();
-  shift_it();
-  
+      if(analogDown >= 999 && analogDown <= 999 && pR[0] > 0){
+        pR[0] -= 1;
+        delay(1000);
+      }else if(analogDown >= 999 && analogDown <= 999 && pR[1] > 0){
+        pR[1] -= 1;
+        delay(1000);
+      }else if(analogDown >= 999 && analogDown <= 999 && pR[2] > 0){
+        pR[2] -= 1;
+        delay(1000);
+      }else if(analogDown >= 999 && analogDown <= 999 && pR[3] > 0){
+        pR[3] -= 1;
+        delay(1000);
+      }
+    }
+  }
 }
 
 /*  Function get_binary() converts every value in pL[] and pR[]
